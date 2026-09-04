@@ -3,71 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>The best day countdown</title>
+
     <style>
-        /* Center everything on a clean white screen */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
+
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: #333333;
+
+            background: #000;
+            color: #fff;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            overflow: hidden;
         }
 
-        /* Container for the timer display */
+        /* =========================
+           Countdown Container
+           ========================= */
+
+        .container {
+            position: relative;
+
+            width: min(90vw, 900px);
+
+            padding: 60px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            text-align: center;
+
+            background: #000;
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+
+        /* =========================
+           Text
+           ========================= */
+
+        h1,
+        #countdown {
+            margin: 0;
+            padding: 0;
+
+            color: #fff;
+
+            line-height: 1.1;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+
+            letter-spacing: -0.5px;
+
+            margin-bottom: 16px;
+        }
+
         #countdown {
             font-size: 3rem;
-            font-weight: bold;
-            line-height: 0.5rem;
-            text-align: center;
+            font-weight: 700;
+
             letter-spacing: -1px;
+
+            white-space: nowrap;
         }
-        .flexx {
-          display: flex;
-          flex-direction: column;
+
+
+        /* =========================
+           Moving Snake
+           ========================= */
+
+        .snake {
+            position: absolute;
+
+            width: 100px;
+            height: 2px;
+
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #fff,
+                #fff
+            );
+
+            box-shadow:
+                0 0 6px #fff,
+                0 0 14px rgba(255, 255, 255, 0.8),
+                0 0 25px rgba(255, 255, 255, 0.3);
+
+            offset-path: inset(0 round 0);
+            offset-distance: 0%;
+
+            animation: snakeMove 4s linear infinite;
+
+            pointer-events: none;
         }
+
+
+        @keyframes snakeMove {
+
+            0% {
+                offset-distance: 0%;
+            }
+
+            100% {
+                offset-distance: 100%;
+            }
+
+        }
+
+
+        /* =========================
+           Mobile
+           ========================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 90vw;
+                padding: 40px 20px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+                margin-bottom: 12px;
+            }
+
+            #countdown {
+                font-size: 1.9rem;
+            }
+
+            .snake {
+                width: 70px;
+            }
+        }
+
     </style>
 </head>
+
+
 <body>
-    <div class="flexx">
-      <h1>Timer for the best day...</h1>
-      <p id="countdown">Loading...</p>
-    </div>
+
+    <main class="container">
+
+        <!-- One single moving loading segment -->
+        <div class="snake"></div>
+
+        <h1>Timer for the best day...</h1>
+
+        <p id="countdown">
+            Loading...
+        </p>
+
+    </main>
+
 
     <script>
-        // Set the target date and time (September 15, 2026, 16:00:00)
-        const targetDate = new Date("2026-09-15T16:00:00").getTime();
+
+        // September 15, 2026, 16:00:00
+        const targetDate =
+            new Date("2026-09-15T16:00:00").getTime();
+
 
         function updateCountdown() {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
 
-            // If the countdown is finished, display a message and stop the timer
+            const now =
+                new Date().getTime();
+
+            const difference =
+                targetDate - now;
+
+
             if (difference < 0) {
-                document.getElementById("countdown").innerHTML = "The time has arrived!";
+
+                document.getElementById("countdown")
+                    .textContent =
+                    "The time has arrived!";
+
                 clearInterval(timerInterval);
+
                 return;
             }
 
-            // Time calculations for days, hours, and minutes
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            // Format the string layout
-            document.getElementById("countdown").innerHTML = 
+            const days =
+                Math.floor(
+                    difference /
+                    (1000 * 60 * 60 * 24)
+                );
+
+
+            const hours =
+                Math.floor(
+                    (difference %
+                        (1000 * 60 * 60 * 24)) /
+                    (1000 * 60 * 60)
+                );
+
+
+            const minutes =
+                Math.floor(
+                    (difference %
+                        (1000 * 60 * 60)) /
+                    (1000 * 60)
+                );
+
+
+            const seconds =
+                Math.floor(
+                    (difference %
+                        (1000 * 60)) /
+                    1000
+                );
+
+
+            document.getElementById("countdown")
+                .textContent =
                 `${days}d ${hours}h ${minutes}m ${seconds}s`;
         }
 
-        // Run the timer immediately on load
+
         updateCountdown();
-        
-        // Update the timer every second (1000 milliseconds)
-        const timerInterval = setInterval(updateCountdown, 1000);
+
+
+        const timerInterval =
+            setInterval(
+                updateCountdown,
+                1000
+            );
+
     </script>
 
 </body>
